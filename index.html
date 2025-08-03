@@ -3,966 +3,1687 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mattel Electronic Football</title>
+    <title>Prompt Knowledge Base</title>
     <style>
-        /* General Styles */
-        body {
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --bg-primary: #FAF3E0;
+            --accent: #BF5700;
+            --secondary: #785A48;
+            --text-primary: #3D352E;
+            --text-secondary: #5D5348;
+            --card-bg: rgba(255, 255, 255, 0.7);
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 10px 15px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
             margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-            font-family: 'Courier New', monospace;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
             min-height: 100vh;
         }
         
-        /* Game Container */
-        .game-container {
-            width: 400px;
-            background-color: #F0EAD6;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
         
-        /* Scoreboard */
-        .scoreboard {
-            width: 100%;
-            background-color: #8B0000;
-            border: 4px solid #006400;
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 15px;
-            color: #FF0000;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-gap: 5px;
+        header {
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
         }
         
-        .scoreboard-item {
+        .header-content {
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
         }
         
-        .scoreboard-value {
-            color: #FF0000;
-            text-shadow: 0 0 5px #FF0000;
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
-        /* Game Field */
-        .game-field {
-            width: 100%;
-            height: 200px;
-            background-color: #8B0000;
-            border: 4px solid #006400;
-            border-radius: 5px;
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background-color: var(--accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .search-container {
+            flex-grow: 1;
+            max-width: 500px;
             position: relative;
-            margin-bottom: 15px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 1px solid var(--secondary);
+            border-radius: 30px;
+            background-color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(191, 87, 0, 0.2);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #a04a00;
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(191, 87, 0, 0.1);
+        }
+        
+        main {
+            padding: 30px 0;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--secondary);
+            padding-bottom: 15px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab:hover {
+            background-color: rgba(191, 87, 0, 0.1);
+        }
+        
+        .tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .section-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+        
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .category-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: var(--transition);
+            border-left: 4px solid var(--accent);
+        }
+        
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .category-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+        
+        .category-description {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        .category-count {
+            display: inline-block;
+            background-color: var(--accent);
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 12px;
+            margin-top: 10px;
+        }
+        
+        .prompts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .prompt-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
             overflow: hidden;
         }
         
-        /* Yard lines */
-        .yard-line {
-            position: absolute;
-            width: 100%;
-            height: 1px;
-            background-color: white;
-            top: 20%;
+        .prompt-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
         }
         
-        .yard-line:nth-child(2) {
-            top: 40%;
-        }
-        
-        .yard-line:nth-child(3) {
-            top: 60%;
-        }
-        
-        .yard-line:nth-child(4) {
-            top: 80%;
-        }
-        
-        /* Player and Defenders */
-        .player, .defender {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background-color: #FF0000;
-            border-radius: 50%;
-            box-shadow: 0 0 10px 2px #FF0000;
-            z-index: 2;
-        }
-        
-        /* Control Panel */
-        .control-panel {
-            width: 100%;
-            background-color: #3A3B3C;
-            border-radius: 5px;
-            padding: 15px;
+        .prompt-card-header {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        /* Button Rows */
-        .button-row {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 10px;
-            width: 100%;
-        }
-        
-        /* Buttons */
-        .btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 5px;
-            border: none;
-            margin: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 3px 0 rgba(0, 0, 0, 0.3);
-            transition: all 0.1s;
-        }
-        
-        .btn:active {
-            transform: translateY(3px);
-            box-shadow: none;
-        }
-        
-        .btn-blue {
-            background-color: #3498db;
-            color: white;
-        }
-        
-        .btn-yellow {
-            background-color: #f1c40f;
-            color: black;
-        }
-        
-        .btn-orange {
-            background-color: #e67e22;
-            color: white;
-        }
-        
-        /* Arrow Buttons */
-        .arrow-up::before {
-            content: '▲';
-            font-size: 24px;
-        }
-        
-        .arrow-down::before {
-            content: '▼';
-            font-size: 24px;
-        }
-        
-        .arrow-left::before {
-            content: '◀';
-            font-size: 24px;
-        }
-        
-        .arrow-right::before {
-            content: '▶';
-            font-size: 24px;
-        }
-        
-        /* Difficulty Switch */
-        .difficulty-switch {
-            display: flex;
-            align-items: center;
-            margin-top: 10px;
-            width: 100%;
             justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
         }
         
-        .switch-container {
-            display: flex;
-            background-color: #2c3e50;
-            border-radius: 15px;
-            padding: 3px;
-            width: 150px;
+        .prompt-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 5px;
         }
         
-        .switch-position {
-            flex: 1;
-            height: 25px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
+        .prompt-category {
             font-size: 12px;
-            cursor: pointer;
+            color: var(--accent);
+            background-color: rgba(191, 87, 0, 0.1);
+            padding: 3px 8px;
             border-radius: 12px;
-            transition: background-color 0.2s;
+            display: inline-block;
         }
         
-        .switch-position.active {
-            background-color: #3498db;
+        .prompt-description {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
         
-        /* Branding */
-        .branding {
-            margin-top: 15px;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            color: #3A3B3C;
-            text-align: center;
-            letter-spacing: 2px;
+        .prompt-use-case {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-style: italic;
         }
         
-        /* Info Display */
-        .info-display {
+        .favorite-btn {
             position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+        
+        .favorite-btn:hover {
+            color: var(--accent);
+        }
+        
+        .favorite-btn.active {
+            color: var(--accent);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #8B0000;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: #FF0000;
-            font-family: 'Courier New', monospace;
-            font-size: 16px;
-            z-index: 10;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
         }
         
-        .info-display.active {
+        .modal.active {
             display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
-        .info-row {
+        .modal-content {
+            background-color: var(--bg-primary);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            animation: slideIn 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--secondary);
             display: flex;
             justify-content: space-between;
-            width: 80%;
-            margin: 5px 0;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+        
+        .modal-close:hover {
+            color: var(--accent);
+        }
+        
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        
+        .modal-prompt-text {
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .modal-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .meta-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+        
+        .meta-value {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid var(--secondary);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--accent);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-hover);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 2000;
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        .empty-state-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .empty-state-description {
+            margin-bottom: 20px;
+        }
+        
+        .add-prompt-form {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--secondary);
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: rgba(255, 255, 255, 0.8);
+            transition: var(--transition);
+        }
+        
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(191, 87, 0, 0.2);
+        }
+        
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .filter-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 150px;
+        }
+        
+        .filter-label {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .shortcuts-info {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+        
+        .shortcuts-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .shortcuts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .shortcut-key {
+            background-color: var(--secondary);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+            }
+            
+            .search-container {
+                max-width: 100%;
+            }
+            
+            .categories-grid, .prompts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+            }
+            
+            .filter-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="game-container">
-        <!-- Scoreboard -->
-        <div class="scoreboard">
-            <div class="scoreboard-item">
-                <span>DOWN:</span>
-                <span class="scoreboard-value" id="down">1</span>
-            </div>
-            <div class="scoreboard-item">
-                <span>FIELD POSITION:</span>
-                <span class="scoreboard-value" id="field-position">20</span>
-            </div>
-            <div class="scoreboard-item">
-                <span>YARDS TO GO:</span>
-                <span class="scoreboard-value" id="yards-to-go">10</span>
-            </div>
-            <div class="scoreboard-item">
-                <span>HOME:</span>
-                <span class="scoreboard-value" id="home-score">0</span>
-            </div>
-            <div class="scoreboard-item">
-                <span>TIME REMAINING:</span>
-                <span class="scoreboard-value" id="time-remaining">5:00</span>
-            </div>
-            <div class="scoreboard-item">
-                <span>VISITOR:</span>
-                <span class="scoreboard-value" id="visitor-score">0</span>
-            </div>
-        </div>
-        
-        <!-- Game Field -->
-        <div class="game-field" id="game-field">
-            <!-- Yard lines -->
-            <div class="yard-line"></div>
-            <div class="yard-line"></div>
-            <div class="yard-line"></div>
-            <div class="yard-line"></div>
-            
-            <!-- Player -->
-            <div class="player" id="player"></div>
-            
-            <!-- Info Display (shown when ST or SC is pressed) -->
-            <div class="info-display" id="info-display">
-                <div id="info-content"></div>
-            </div>
-        </div>
-        
-        <!-- Control Panel -->
-        <div class="control-panel">
-            <!-- First Row of Buttons -->
-            <div class="button-row">
-                <button class="btn btn-blue" id="btn-st">ST</button>
-                <button class="btn btn-blue" id="btn-sc">SC</button>
-                <button class="btn btn-blue" id="btn-k">K</button>
-            </div>
-            
-            <!-- Second Row (Arrow Buttons) -->
-            <div class="button-row">
-                <button class="btn btn-orange arrow-up" id="btn-up"></button>
-            </div>
-            
-            <div class="button-row">
-                <button class="btn btn-orange arrow-left" id="btn-left"></button>
-                <button class="btn btn-orange arrow-right" id="btn-right"></button>
-            </div>
-            
-            <div class="button-row">
-                <button class="btn btn-orange arrow-down" id="btn-down"></button>
-            </div>
-            
-            <!-- Third Row -->
-            <div class="button-row">
-                <button class="btn btn-yellow" id="btn-sound">SOUND</button>
-            </div>
-            
-            <!-- Difficulty Switch -->
-            <div class="difficulty-switch">
-                <span>DIFFICULTY:</span>
-                <div class="switch-container">
-                    <div class="switch-position" id="diff-easy">1</div>
-                    <div class="switch-position active" id="diff-off">OFF</div>
-                    <div class="switch-position" id="diff-hard">2</div>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">P</div>
+                    <span>Prompt Knowledge Base</span>
+                </div>
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" placeholder="Search prompts..." id="searchInput">
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" id="shortcutsBtn">
+                        <span>⌨️</span> Shortcuts
+                    </button>
+                    <button class="btn btn-primary" id="addPromptBtn">
+                        <span>+</span> Add Prompt
+                    </button>
                 </div>
             </div>
         </div>
-        
-        <!-- Branding -->
-        <div class="branding">ELECTRONIC FOOTBALL</div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="tabs">
+                <div class="tab active" data-tab="categories">Categories</div>
+                <div class="tab" data-tab="recent">Recently Used</div>
+                <div class="tab" data-tab="favorites">Favorites</div>
+                <div class="tab" data-tab="all">All Prompts</div>
+            </div>
+
+            <div class="content-section active" id="categories">
+                <h2 class="section-title">Prompt Categories</h2>
+                <div class="categories-grid" id="categoriesGrid">
+                    <!-- Categories will be dynamically loaded here -->
+                </div>
+            </div>
+
+            <div class="content-section" id="recent">
+                <h2 class="section-title">Recently Used Prompts</h2>
+                <div class="prompts-grid" id="recentPromptsGrid">
+                    <!-- Recently used prompts will be dynamically loaded here -->
+                </div>
+                <div class="empty-state" id="recentEmptyState" style="display: none;">
+                    <div class="empty-state-icon">📋</div>
+                    <div class="empty-state-title">No recently used prompts</div>
+                    <div class="empty-state-description">Your recently used prompts will appear here</div>
+                </div>
+            </div>
+
+            <div class="content-section" id="favorites">
+                <h2 class="section-title">Favorite Prompts</h2>
+                <div class="prompts-grid" id="favoritesPromptsGrid">
+                    <!-- Favorite prompts will be dynamically loaded here -->
+                </div>
+                <div class="empty-state" id="favoritesEmptyState" style="display: none;">
+                    <div class="empty-state-icon">⭐</div>
+                    <div class="empty-state-title">No favorite prompts</div>
+                    <div class="empty-state-description">Your favorite prompts will appear here</div>
+                </div>
+            </div>
+
+            <div class="content-section" id="all">
+                <h2 class="section-title">All Prompts</h2>
+                <div class="filter-container">
+                    <div class="filter-group">
+                        <label class="filter-label">Category</label>
+                        <select class="form-select" id="categoryFilter">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Complexity</label>
+                        <select class="form-select" id="complexityFilter">
+                            <option value="">All Levels</option>
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Use Case</label>
+                        <select class="form-select" id="useCaseFilter">
+                            <option value="">All Use Cases</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="prompts-grid" id="allPromptsGrid">
+                    <!-- All prompts will be dynamically loaded here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for viewing prompts -->
+    <div class="modal" id="promptModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Prompt Title</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Category</div>
+                        <div class="meta-value" id="modalCategory">-</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Complexity</div>
+                        <div class="meta-value" id="modalComplexity">-</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Use Case</div>
+                        <div class="meta-value" id="modalUseCase">-</div>
+                    </div>
+                </div>
+                <div class="modal-prompt-text" id="modalPromptText">Prompt text goes here...</div>
+                <div class="meta-item">
+                    <div class="meta-label">Description</div>
+                    <div class="meta-value" id="modalDescription">-</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="modalFavoriteBtn">
+                    <span>⭐</span> <span id="modalFavoriteText">Add to Favorites</span>
+                </button>
+                <button class="btn btn-primary" id="modalCopyBtn">
+                    <span>📋</span> Copy Prompt
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for adding prompts -->
+    <div class="modal" id="addPromptModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Prompt</h3>
+                <button class="modal-close" id="addPromptModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addPromptForm">
+                    <div class="form-group">
+                        <label class="form-label" for="promptTitle">Title</label>
+                        <input type="text" class="form-input" id="promptTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="promptCategory">Category</label>
+                        <select class="form-select" id="promptCategory" required>
+                            <option value="">Select a category</option>
+                            <option value="Best Practices">Best Practices</option>
+                            <option value="Project-Based Prompting">Project-Based Prompting</option>
+                            <option value="Specific Prompts & Use Cases">Specific Prompts & Use Cases</option>
+                            <option value="ChatGPT Cheat Codes">ChatGPT Cheat Codes</option>
+                            <option value="Advanced Prompting Techniques">Advanced Prompting Techniques</option>
+                            <option value="Custom">Custom</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="customCategoryGroup" style="display: none;">
+                        <label class="form-label" for="customCategory">Custom Category</label>
+                        <input type="text" class="form-input" id="customCategory">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="promptComplexity">Complexity</label>
+                        <select class="form-select" id="promptComplexity" required>
+                            <option value="">Select complexity</option>
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="promptUseCase">Use Case</label>
+                        <input type="text" class="form-input" id="promptUseCase" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="promptDescription">Description</label>
+                        <textarea class="form-textarea" id="promptDescription" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="promptText">Prompt Text</label>
+                        <textarea class="form-textarea" id="promptText" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelAddPrompt">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Prompt</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for keyboard shortcuts -->
+    <div class="modal" id="shortcutsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Keyboard Shortcuts</h3>
+                <button class="modal-close" id="shortcutsModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="shortcuts-info">
+                    <div class="shortcuts-grid">
+                        <div class="shortcut-item">
+                            <span>Search</span>
+                            <span class="shortcut-key">Ctrl + /</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <span>Add Prompt</span>
+                            <span class="shortcut-key">Ctrl + N</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <span>View Categories</span>
+                            <span class="shortcut-key">Ctrl + 1</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <span>View Recent</span>
+                            <span class="shortcut-key">Ctrl + 2</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <span>View Favorites</span>
+                            <span class="shortcut-key">Ctrl + 3</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <span>View All Prompts</span>
+                            <span class="shortcut-key">Ctrl + 4</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <span>Close Modal</span>
+                            <span class="shortcut-key">Esc</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <span id="notificationText">Prompt copied to clipboard!</span>
     </div>
 
     <script>
-        // Game State Variables
-        let gameState = {
-            isOn: false,          // Game is on/off
-            isPlaying: false,     // Game is actively being played
-            soundEnabled: true,   // Sound is on/off
-            difficulty: 'off',    // Current difficulty setting
-            down: 1,              // Current down (1-4)
-            fieldPosition: 20,    // Current yard line
-            yardsToGo: 10,        // Yards needed for first down
-            homeScore: 0,         // Home team score
-            visitorScore: 0,      // Visitor team score
-            timeRemaining: 300,   // Time remaining in seconds
-            playerX: 50,          // Player X position
-            playerY: 100,         // Player Y position
-            defenders: [],        // Array of defender objects
-            gameTimer: null,      // Timer for game countdown
-            defenderTimer: null,  // Timer for defender movement
-            infoDisplayTimer: null // Timer for info display
-        };
-        
-        // DOM Elements
-        const elements = {
-            down: document.getElementById('down'),
-            fieldPosition: document.getElementById('field-position'),
-            yardsToGo: document.getElementById('yards-to-go'),
-            homeScore: document.getElementById('home-score'),
-            visitorScore: document.getElementById('visitor-score'),
-            timeRemaining: document.getElementById('time-remaining'),
-            gameField: document.getElementById('game-field'),
-            player: document.getElementById('player'),
-            infoDisplay: document.getElementById('info-display'),
-            infoContent: document.getElementById('info-content'),
-            btnSt: document.getElementById('btn-st'),
-            btnSc: document.getElementById('btn-sc'),
-            btnK: document.getElementById('btn-k'),
-            btnSound: document.getElementById('btn-sound'),
-            btnUp: document.getElementById('btn-up'),
-            btnDown: document.getElementById('btn-down'),
-            btnLeft: document.getElementById('btn-left'),
-            btnRight: document.getElementById('btn-right'),
-            diffEasy: document.getElementById('diff-easy'),
-            diffOff: document.getElementById('diff-off'),
-            diffHard: document.getElementById('diff-hard')
-        };
-        
-        // Sound Effects
-        const sounds = {
-            move: new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAAAA'),
-            tackle: new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAAAA'),
-            touchdown: new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAAAA'),
-            button: new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAAAA')
-        };
-        
-        // Initialize the game
-        function initGame() {
-            // Set initial player position
-            updatePlayerPosition();
+        // Sample prompt data
+        const samplePrompts = [
+            {
+                id: 1,
+                title: "Act as a Expert",
+                category: "Best Practices",
+                complexity: "beginner",
+                useCase: "Role Playing",
+                description: "A basic prompt to have the AI act as an expert in a specific field.",
+                text: "Act as an expert in [field]. I will ask you questions about this field, and you will provide detailed, accurate, and helpful answers. If I ask for something outside your expertise, let me know. Do you understand?"
+            },
+            {
+                id: 2,
+                title: "Step-by-Step Thinking",
+                category: "Best Practices",
+                complexity: "intermediate",
+                useCase: "Problem Solving",
+                description: "A prompt that encourages the AI to think through problems step by step.",
+                text: "When solving problems, think step by step. Before providing a final answer, break down the problem into smaller parts, analyze each part, and then synthesize your findings into a comprehensive solution. Show your work and explain your reasoning at each step."
+            },
+            {
+                id: 3,
+                title: "Content Creation Framework",
+                category: "Project-Based Prompting",
+                complexity: "advanced",
+                useCase: "Content Creation",
+                description: "A comprehensive framework for creating high-quality content.",
+                text: "I need you to help me create content about [topic]. Please follow this framework:\n\n1. Research: Provide key information and statistics about [topic].\n2. Outline: Create a detailed outline for the content.\n3. Draft: Write a first draft based on the outline.\n4. Refine: Improve the draft for clarity, engagement, and accuracy.\n5. Finalize: Provide the polished final version.\n\nLet's start with step 1."
+            },
+            {
+                id: 4,
+                title: "Code Review Assistant",
+                category: "Specific Prompts & Use Cases",
+                complexity: "intermediate",
+                useCase: "Programming",
+                description: "A prompt to help review and improve code.",
+                text: "Act as an experienced code reviewer. I will provide you with code written in [language], and you will:\n\n1. Identify potential bugs or errors\n2. Suggest improvements for readability and maintainability\n3. Recommend best practices specific to [language]\n4. Point out any security concerns\n5. Provide specific examples of how to improve the code\n\nHere is the code I'd like you to review:\n\n[code here]"
+            },
+            {
+                id: 5,
+                title: "Continue Text",
+                category: "ChatGPT Cheat Codes",
+                complexity: "beginner",
+                useCase: "Text Generation",
+                description: "A simple prompt to continue text when the AI stops mid-sentence.",
+                text: "Continue"
+            },
+            {
+                id: 6,
+                title: "Chain of Thought Prompting",
+                category: "Advanced Prompting Techniques",
+                complexity: "advanced",
+                useCase: "Complex Reasoning",
+                description: "A technique to improve reasoning by having the AI show its thought process.",
+                text: "Use chain of thought reasoning to answer the following question. This means you should:\n\n1. Break down the question into smaller parts\n2. Reason through each part step by step\n3. Show your thought process explicitly\n4. Arrive at a final answer based on your reasoning\n\nQuestion: [your question here]"
+            },
+            {
+                id: 7,
+                title: "Summarization Expert",
+                category: "Best Practices",
+                complexity: "intermediate",
+                useCase: "Information Processing",
+                description: "A prompt to create concise and accurate summaries.",
+                text: "Act as an expert summarizer. I will provide you with a text, and you will create a concise summary that:\n\n1. Captures the main points and key arguments\n2. Maintains the original meaning and tone\n3. Is significantly shorter than the original text\n4. Is well-structured and easy to understand\n\nThe summary should be no more than [desired length] words. Here is the text to summarize:"
+            },
+            {
+                id: 8,
+                title: "Creative Brainstorming",
+                category: "Project-Based Prompting",
+                complexity: "intermediate",
+                useCase: "Idea Generation",
+                description: "A framework for generating creative ideas.",
+                text: "I need to brainstorm ideas for [project/topic]. Help me by:\n\n1. Asking clarifying questions about my goals and constraints\n2. Generating a diverse set of initial ideas without judgment\n3. Grouping similar ideas together\n4. Expanding on the most promising ideas\n5. Providing a final list of actionable ideas with next steps\n\nLet's start with step 1."
+            },
+            {
+                id: 9,
+                title: "Language Translation",
+                category: "Specific Prompts & Use Cases",
+                complexity: "intermediate",
+                useCase: "Translation",
+                description: "A prompt for accurate and nuanced translation.",
+                text: "Act as a professional translator. I will provide you with text in [source language], and you will translate it into [target language]. Your translation should:\n\n1. Be accurate and faithful to the original meaning\n2. Capture the tone and style of the original\n3. Use natural-sounding language in the target language\n4. Consider cultural context and nuances\n5. Include notes on any particularly challenging phrases or cultural references\n\nHere is the text to translate:"
+            },
+            {
+                id: 10,
+                title: "Regenerate Response",
+                category: "ChatGPT Cheat Codes",
+                complexity: "beginner",
+                useCase: "Response Improvement",
+                description: "A simple prompt to regenerate a response.",
+                text: "Regenerate your response with a different approach."
+            },
+            {
+                id: 11,
+                title: "Few-Shot Learning",
+                category: "Advanced Prompting Techniques",
+                complexity: "advanced",
+                useCase: "Task Learning",
+                description: "A technique to teach the AI a new task with examples.",
+                text: "I want you to learn how to [task]. Here are some examples of how to do it:\n\nExample 1:\nInput: [example input 1]\nOutput: [example output 1]\n\nExample 2:\nInput: [example input 2]\nOutput: [example output 2]\n\nExample 3:\nInput: [example input 3]\nOutput: [example output 3]\n\nNow, perform the task on this input:\nInput: [new input]\nOutput:"
+            },
+            {
+                id: 12,
+                title: "Technical Writing Assistant",
+                category: "Best Practices",
+                complexity: "intermediate",
+                useCase: "Documentation",
+                description: "A prompt to help create clear and effective technical documentation.",
+                text: "Act as a technical writing expert. I will provide you with technical information, and you will help me create documentation that:\n\n1. Is clear, concise, and easy to understand\n2. Is well-structured with appropriate headings and sections\n3. Includes examples where helpful\n4. Uses consistent terminology\n5. Is appropriate for the target audience ([describe audience])\n\nHere is the technical information I want to document:"
+            },
+            {
+                id: 13,
+                title: "Market Research Framework",
+                category: "Project-Based Prompting",
+                complexity: "advanced",
+                useCase: "Business Analysis",
+                description: "A comprehensive framework for conducting market research.",
+                text: "I need to conduct market research for [product/service]. Help me by following this framework:\n\n1. Objectives: Define clear research objectives\n2. Target Audience: Identify and describe the target audience\n3. Competitors: List and analyze key competitors\n4. Market Trends: Identify relevant market trends\n5. Opportunities and Threats: SWOT analysis\n6. Recommendations: Provide actionable recommendations\n\nLet's start with step 1."
+            },
+            {
+                id: 14,
+                title: "Interview Preparation",
+                category: "Specific Prompts & Use Cases",
+                complexity: "intermediate",
+                useCase: "Career Development",
+                description: "A prompt to help prepare for job interviews.",
+                text: "I'm preparing for a job interview for a [position] role at [company type]. Help me prepare by:\n\n1. Listing common interview questions for this type of role\n2. Providing guidance on how to structure effective answers\n3. Conducting a mock interview with me\n4. Giving feedback on my answers\n5. Suggesting questions I should ask the interviewer\n\nLet's start with step 1."
+            },
+            {
+                id: 15,
+                title: "Change Perspective",
+                category: "ChatGPT Cheat Codes",
+                complexity: "beginner",
+                useCase: "Creative Thinking",
+                description: "A prompt to get the AI to approach a problem from a different angle.",
+                text: "Let's approach this from a different perspective."
+            },
+            {
+                id: 16,
+                title: "Tree of Thoughts",
+                category: "Advanced Prompting Techniques",
+                complexity: "advanced",
+                useCase: "Complex Problem Solving",
+                description: "A technique that explores multiple reasoning paths simultaneously.",
+                text: "Use the Tree of Thoughts method to solve the following problem. This means you should:\n\n1. Generate multiple possible approaches or reasoning paths\n2. Explore each path step by step\n3. Evaluate the progress and potential of each path\n4. Self-critique and refine your thinking\n5. Choose the most promising path and continue until you reach a solution\n\nProblem: [your problem here]"
+            }
+        ];
+
+        // App state
+        let prompts = [...samplePrompts];
+        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+        let recentPrompts = JSON.parse(localStorage.getItem('recentPrompts')) || [];
+        let userPrompts = JSON.parse(localStorage.getItem('userPrompts')) || [];
+        let currentPrompt = null;
+        let activeTab = 'categories';
+
+        // DOM elements
+        const tabs = document.querySelectorAll('.tab');
+        const contentSections = document.querySelectorAll('.content-section');
+        const searchInput = document.getElementById('searchInput');
+        const categoriesGrid = document.getElementById('categoriesGrid');
+        const recentPromptsGrid = document.getElementById('recentPromptsGrid');
+        const favoritesPromptsGrid = document.getElementById('favoritesPromptsGrid');
+        const allPromptsGrid = document.getElementById('allPromptsGrid');
+        const promptModal = document.getElementById('promptModal');
+        const addPromptModal = document.getElementById('addPromptModal');
+        const shortcutsModal = document.getElementById('shortcutsModal');
+        const notification = document.getElementById('notification');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const complexityFilter = document.getElementById('complexityFilter');
+        const useCaseFilter = document.getElementById('useCaseFilter');
+        const recentEmptyState = document.getElementById('recentEmptyState');
+        const favoritesEmptyState = document.getElementById('favoritesEmptyState');
+
+        // Initialize app
+        function init() {
+            // Combine sample prompts with user prompts
+            prompts = [...samplePrompts, ...userPrompts];
+            
+            // Render categories
+            renderCategories();
+            
+            // Render prompts
+            renderRecentPrompts();
+            renderFavoritesPrompts();
+            renderAllPrompts();
             
             // Set up event listeners
             setupEventListeners();
             
-            // Update display
-            updateDisplay();
+            // Populate filter options
+            populateFilterOptions();
         }
-        
+
         // Set up event listeners
         function setupEventListeners() {
-            // Button event listeners
-            elements.btnSt.addEventListener('click', handleStButton);
-            elements.btnSc.addEventListener('click', handleScButton);
-            elements.btnK.addEventListener('click', handleKButton);
-            elements.btnSound.addEventListener('click', handleSoundButton);
+            // Tab switching
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.dataset.tab;
+                    switchTab(tabName);
+                });
+            });
+
+            // Search
+            searchInput.addEventListener('input', handleSearch);
+
+            // Modal controls
+            document.getElementById('modalClose').addEventListener('click', closePromptModal);
+            document.getElementById('addPromptModalClose').addEventListener('click', closeAddPromptModal);
+            document.getElementById('shortcutsModalClose').addEventListener('click', closeShortcutsModal);
+            document.getElementById('cancelAddPrompt').addEventListener('click', closeAddPromptModal);
             
-            // Direction buttons
-            elements.btnUp.addEventListener('click', () => movePlayer('up'));
-            elements.btnDown.addEventListener('click', () => movePlayer('down'));
-            elements.btnLeft.addEventListener('click', () => movePlayer('left'));
-            elements.btnRight.addEventListener('click', () => movePlayer('right'));
+            // Modal buttons
+            document.getElementById('modalCopyBtn').addEventListener('click', copyPromptToClipboard);
+            document.getElementById('modalFavoriteBtn').addEventListener('click', toggleFavorite);
             
-            // Difficulty switch
-            elements.diffEasy.addEventListener('click', () => setDifficulty('easy'));
-            elements.diffOff.addEventListener('click', () => setDifficulty('off'));
-            elements.diffHard.addEventListener('click', () => setDifficulty('hard'));
+            // Header buttons
+            document.getElementById('addPromptBtn').addEventListener('click', openAddPromptModal);
+            document.getElementById('shortcutsBtn').addEventListener('click', openShortcutsModal);
             
-            // Keyboard controls
-            document.addEventListener('keydown', handleKeyDown);
+            // Form submission
+            document.getElementById('addPromptForm').addEventListener('submit', handleAddPrompt);
+            
+            // Custom category handling
+            document.getElementById('promptCategory').addEventListener('change', handleCategoryChange);
+            
+            // Filters
+            categoryFilter.addEventListener('change', filterAllPrompts);
+            complexityFilter.addEventListener('change', filterAllPrompts);
+            useCaseFilter.addEventListener('change', filterAllPrompts);
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', handleKeyboardShortcuts);
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === promptModal) closePromptModal();
+                if (e.target === addPromptModal) closeAddPromptModal();
+                if (e.target === shortcutsModal) closeShortcutsModal();
+            });
         }
-        
-        // Handle keyboard input
-        function handleKeyDown(event) {
-            if (!gameState.isOn || !gameState.isPlaying) return;
+
+        // Tab switching
+        function switchTab(tabName) {
+            activeTab = tabName;
             
-            switch(event.key) {
-                case 'ArrowUp':
-                    movePlayer('up');
-                    break;
-                case 'ArrowDown':
-                    movePlayer('down');
-                    break;
-                case 'ArrowLeft':
-                    movePlayer('left');
-                    break;
-                case 'ArrowRight':
-                    movePlayer('right');
-                    break;
-            }
-        }
-        
-        // Handle ST (Status) button
-        function handleStButton() {
-            playSound('button');
-            
-            if (!gameState.isOn) return;
-            
-            // Show status information
-            elements.infoContent.innerHTML = `
-                <div class="info-row">
-                    <span>DOWN:</span>
-                    <span>${gameState.down}</span>
-                </div>
-                <div class="info-row">
-                    <span>FIELD POSITION:</span>
-                    <span>${gameState.fieldPosition}</span>
-                </div>
-                <div class="info-row">
-                    <span>YARDS TO GO:</span>
-                    <span>${gameState.yardsToGo}</span>
-                </div>
-            `;
-            
-            elements.infoDisplay.classList.add('active');
-            
-            // Clear any existing timer
-            if (gameState.infoDisplayTimer) {
-                clearTimeout(gameState.infoDisplayTimer);
-            }
-            
-            // Hide after 3 seconds
-            gameState.infoDisplayTimer = setTimeout(() => {
-                elements.infoDisplay.classList.remove('active');
-            }, 3000);
-        }
-        
-        // Handle SC (Score) button
-        function handleScButton() {
-            playSound('button');
-            
-            if (!gameState.isOn) return;
-            
-            // Show score information
-            const minutes = Math.floor(gameState.timeRemaining / 60);
-            const seconds = gameState.timeRemaining % 60;
-            const timeString = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-            
-            elements.infoContent.innerHTML = `
-                <div class="info-row">
-                    <span>HOME:</span>
-                    <span>${gameState.homeScore}</span>
-                </div>
-                <div class="info-row">
-                    <span>VISITOR:</span>
-                    <span>${gameState.visitorScore}</span>
-                </div>
-                <div class="info-row">
-                    <span>TIME REMAINING:</span>
-                    <span>${timeString}</span>
-                </div>
-            `;
-            
-            elements.infoDisplay.classList.add('active');
-            
-            // Clear any existing timer
-            if (gameState.infoDisplayTimer) {
-                clearTimeout(gameState.infoDisplayTimer);
-            }
-            
-            // Hide after 3 seconds
-            gameState.infoDisplayTimer = setTimeout(() => {
-                elements.infoDisplay.classList.remove('active');
-            }, 3000);
-        }
-        
-        // Handle K (Kick) button
-        function handleKButton() {
-            playSound('button');
-            
-            if (!gameState.isOn || !gameState.isPlaying) return;
-            
-            // Only allow kicking on 4th down
-            if (gameState.down !== 4) return;
-            
-            // Implement kicking logic
-            // For simplicity, we'll just reset the down and position
-            gameState.down = 1;
-            gameState.fieldPosition = 20;
-            gameState.yardsToGo = 10;
-            
-            // Update display
-            updateDisplay();
-            
-            // Reset player position
-            gameState.playerX = 50;
-            gameState.playerY = 100;
-            updatePlayerPosition();
-            
-            // Remove all defenders
-            clearDefenders();
-            
-            // Create new defenders
-            createDefenders();
-        }
-        
-        // Handle SOUND button
-        function handleSoundButton() {
-            playSound('button');
-            
-            // Toggle sound
-            gameState.soundEnabled = !gameState.soundEnabled;
-            
-            // Visual feedback (could be improved)
-            elements.btnSound.style.opacity = gameState.soundEnabled ? '1' : '0.5';
-        }
-        
-        // Set difficulty
-        function setDifficulty(difficulty) {
-            playSound('button');
-            
-            // Update UI
-            elements.diffEasy.classList.remove('active');
-            elements.diffOff.classList.remove('active');
-            elements.diffHard.classList.remove('active');
-            
-            if (difficulty === 'easy') {
-                elements.diffEasy.classList.add('active');
-            } else if (difficulty === 'off') {
-                elements.diffOff.classList.add('active');
-            } else if (difficulty === 'hard') {
-                elements.diffHard.classList.add('active');
-            }
-            
-            // If turning off, stop the game
-            if (difficulty === 'off') {
-                if (gameState.isOn) {
-                    stopGame();
+            // Update active tab
+            tabs.forEach(tab => {
+                if (tab.dataset.tab === tabName) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
                 }
-                gameState.isOn = false;
+            });
+            
+            // Update active content section
+            contentSections.forEach(section => {
+                if (section.id === tabName) {
+                    section.classList.add('active');
+                } else {
+                    section.classList.remove('active');
+                }
+            });
+            
+            // Refresh content if needed
+            if (tabName === 'recent') {
+                renderRecentPrompts();
+            } else if (tabName === 'favorites') {
+                renderFavoritesPrompts();
+            } else if (tabName === 'all') {
+                renderAllPrompts();
+            }
+        }
+
+        // Render categories
+        function renderCategories() {
+            const categories = {};
+            
+            // Count prompts in each category
+            prompts.forEach(prompt => {
+                if (!categories[prompt.category]) {
+                    categories[prompt.category] = {
+                        name: prompt.category,
+                        count: 0,
+                        description: getCategoryDescription(prompt.category)
+                    };
+                }
+                categories[prompt.category].count++;
+            });
+            
+            // Clear grid
+            categoriesGrid.innerHTML = '';
+            
+            // Render category cards
+            Object.values(categories).forEach(category => {
+                const categoryCard = document.createElement('div');
+                categoryCard.className = 'category-card';
+                categoryCard.innerHTML = `
+                    <div class="category-title">${category.name}</div>
+                    <div class="category-description">${category.description}</div>
+                    <div class="category-count">${category.count} prompts</div>
+                `;
+                
+                categoryCard.addEventListener('click', () => {
+                    showCategoryPrompts(category.name);
+                });
+                
+                categoriesGrid.appendChild(categoryCard);
+            });
+        }
+
+        // Get category description
+        function getCategoryDescription(category) {
+            const descriptions = {
+                'Best Practices': 'Essential techniques for effective prompt engineering',
+                'Project-Based Prompting': 'Structured approaches for complex projects',
+                'Specific Prompts & Use Cases': 'Ready-to-use prompts for specific scenarios',
+                'ChatGPT Cheat Codes': 'Quick commands to enhance your interactions',
+                'Advanced Prompting Techniques': 'Sophisticated methods for expert users'
+            };
+            
+            return descriptions[category] || 'Custom category for specialized prompts';
+        }
+
+        // Show prompts from a specific category
+        function showCategoryPrompts(categoryName) {
+            const categoryPrompts = prompts.filter(prompt => prompt.category === categoryName);
+            
+            // Clear all prompts grid
+            allPromptsGrid.innerHTML = '';
+            
+            // Render category prompts
+            categoryPrompts.forEach(prompt => {
+                const promptCard = createPromptCard(prompt);
+                allPromptsGrid.appendChild(promptCard);
+            });
+            
+            // Switch to all prompts tab
+            switchTab('all');
+            
+            // Update category filter
+            categoryFilter.value = categoryName;
+        }
+
+        // Render recent prompts
+        function renderRecentPrompts() {
+            recentPromptsGrid.innerHTML = '';
+            
+            if (recentPrompts.length === 0) {
+                recentEmptyState.style.display = 'block';
                 return;
             }
             
-            // If turning on, start the game
-            if (!gameState.isOn) {
-                startGame(difficulty);
-            } else {
-                // Just update difficulty
-                gameState.difficulty = difficulty;
-                
-                // Recreate defenders with new difficulty
-                clearDefenders();
-                createDefenders();
-            }
-        }
-        
-        // Start the game
-        function startGame(difficulty) {
-            // Set game state
-            gameState.isOn = true;
-            gameState.isPlaying = true;
-            gameState.difficulty = difficulty;
+            recentEmptyState.style.display = 'none';
             
-            // Reset game variables
-            gameState.down = 1;
-            gameState.fieldPosition = 20;
-            gameState.yardsToGo = 10;
-            gameState.homeScore = 0;
-            gameState.visitorScore = 0;
-            gameState.timeRemaining = 300;
-            gameState.playerX = 50;
-            gameState.playerY = 100;
+            // Get recent prompt objects
+            const recentPromptObjects = recentPrompts
+                .map(id => prompts.find(p => p.id === id))
+                .filter(Boolean);
             
-            // Update display
-            updateDisplay();
-            updatePlayerPosition();
-            
-            // Create defenders
-            createDefenders();
-            
-            // Start game timer
-            startGameTimer();
-            
-            // Start defender movement
-            startDefenderMovement();
-        }
-        
-        // Stop the game
-        function stopGame() {
-            gameState.isPlaying = false;
-            
-            // Clear timers
-            if (gameState.gameTimer) {
-                clearInterval(gameState.gameTimer);
-                gameState.gameTimer = null;
-            }
-            
-            if (gameState.defenderTimer) {
-                clearInterval(gameState.defenderTimer);
-                gameState.defenderTimer = null;
-            }
-            
-            // Clear defenders
-            clearDefenders();
-            
-            // Reset display
-            elements.down.textContent = '-';
-            elements.fieldPosition.textContent = '-';
-            elements.yardsToGo.textContent = '-';
-            elements.homeScore.textContent = '-';
-            elements.visitorScore.textContent = '-';
-            elements.timeRemaining.textContent = '-';
-        }
-        
-        // Start game timer
-        function startGameTimer() {
-            gameState.gameTimer = setInterval(() => {
-                // Decrease time
-                gameState.timeRemaining--;
-                
-                // Update display
-                updateTimeDisplay();
-                
-                // Check if time is up
-                if (gameState.timeRemaining <= 0) {
-                    endGame();
-                }
-            }, 1000);
-        }
-        
-        // Start defender movement
-        function startDefenderMovement() {
-            // Set interval based on difficulty
-            const interval = gameState.difficulty === 'easy' ? 500 : 250;
-            
-            gameState.defenderTimer = setInterval(() => {
-                moveDefenders();
-                checkCollisions();
-            }, interval);
-        }
-        
-        // Create defenders
-        function createDefenders() {
-            // Clear existing defenders
-            clearDefenders();
-            
-            // Number of defenders based on difficulty
-            const defenderCount = gameState.difficulty === 'easy' ? 3 : 5;
-            
-            // Create defenders
-            for (let i = 0; i < defenderCount; i++) {
-                const defender = document.createElement('div');
-                defender.className = 'defender';
-                
-                // Random position (but not too close to player)
-                let x, y;
-                do {
-                    x = Math.floor(Math.random() * (elements.gameField.offsetWidth - 10));
-                    y = Math.floor(Math.random() * (elements.gameField.offsetHeight - 10));
-                } while (Math.abs(x - gameState.playerX) < 50 && Math.abs(y - gameState.playerY) < 50);
-                
-                defender.style.left = `${x}px`;
-                defender.style.top = `${y}px`;
-                
-                elements.gameField.appendChild(defender);
-                
-                // Add to defenders array
-                gameState.defenders.push({
-                    element: defender,
-                    x: x,
-                    y: y,
-                    speed: gameState.difficulty === 'easy' ? 1 : 2
-                });
-            }
-        }
-        
-        // Clear all defenders
-        function clearDefenders() {
-            // Remove from DOM
-            gameState.defenders.forEach(defender => {
-                defender.element.remove();
-            });
-            
-            // Clear array
-            gameState.defenders = [];
-        }
-        
-        // Move defenders
-        function moveDefenders() {
-            gameState.defenders.forEach(defender => {
-                // Calculate direction to player
-                const dx = gameState.playerX - defender.x;
-                const dy = gameState.playerY - defender.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                
-                // Normalize and apply speed
-                const moveX = (dx / distance) * defender.speed;
-                const moveY = (dy / distance) * defender.speed;
-                
-                // Update position
-                defender.x += moveX;
-                defender.y += moveY;
-                
-                // Update DOM
-                defender.element.style.left = `${defender.x}px`;
-                defender.element.style.top = `${defender.y}px`;
+            // Render recent prompt cards
+            recentPromptObjects.forEach(prompt => {
+                const promptCard = createPromptCard(prompt);
+                recentPromptsGrid.appendChild(promptCard);
             });
         }
-        
-        // Check for collisions
-        function checkCollisions() {
-            gameState.defenders.forEach(defender => {
-                const dx = gameState.playerX - defender.x;
-                const dy = gameState.playerY - defender.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                
-                // If collision
-                if (distance < 15) {
-                    playSound('tackle');
-                    
-                    // Increase down
-                    gameState.down++;
-                    
-                    // Check if turnover
-                    if (gameState.down > 4) {
-                        turnover();
-                    } else {
-                        // Reset player position
-                        gameState.playerX = 50;
-                        gameState.playerY = 100;
-                        updatePlayerPosition();
-                        updateDisplay();
-                    }
-                }
+
+        // Render favorite prompts
+        function renderFavoritesPrompts() {
+            favoritesPromptsGrid.innerHTML = '';
+            
+            if (favorites.length === 0) {
+                favoritesEmptyState.style.display = 'block';
+                return;
+            }
+            
+            favoritesEmptyState.style.display = 'none';
+            
+            // Get favorite prompt objects
+            const favoritePromptObjects = favorites
+                .map(id => prompts.find(p => p.id === id))
+                .filter(Boolean);
+            
+            // Render favorite prompt cards
+            favoritePromptObjects.forEach(prompt => {
+                const promptCard = createPromptCard(prompt);
+                favoritesPromptsGrid.appendChild(promptCard);
             });
         }
-        
-        // Handle turnover
-        function turnover() {
-            // Reset downs
-            gameState.down = 1;
+
+        // Render all prompts
+        function renderAllPrompts() {
+            allPromptsGrid.innerHTML = '';
             
-            // Reset field position
-            gameState.fieldPosition = 20;
-            gameState.yardsToGo = 10;
+            // Get filtered prompts
+            const filteredPrompts = getFilteredPrompts();
             
-            // Reset player position
-            gameState.playerX = 50;
-            gameState.playerY = 100;
-            updatePlayerPosition();
-            
-            // Update display
-            updateDisplay();
-            
-            // Recreate defenders
-            clearDefenders();
-            createDefenders();
+            // Render all prompt cards
+            filteredPrompts.forEach(prompt => {
+                const promptCard = createPromptCard(prompt);
+                allPromptsGrid.appendChild(promptCard);
+            });
         }
-        
-        // Move player
-        function movePlayer(direction) {
-            if (!gameState.isOn || !gameState.isPlaying) return;
+
+        // Get filtered prompts based on current filter values
+        function getFilteredPrompts() {
+            let filtered = [...prompts];
             
-            playSound('move');
-            
-            // Calculate new position
-            let newX = gameState.playerX;
-            let newY = gameState.playerY;
-            const moveDistance = 10;
-            
-            switch(direction) {
-                case 'up':
-                    newY -= moveDistance;
-                    break;
-                case 'down':
-                    newY += moveDistance;
-                    break;
-                case 'left':
-                    newX -= moveDistance;
-                    break;
-                case 'right':
-                    newX += moveDistance;
-                    break;
+            // Apply category filter
+            if (categoryFilter.value) {
+                filtered = filtered.filter(prompt => prompt.category === categoryFilter.value);
             }
             
-            // Boundary checking
-            if (newX < 0) newX = 0;
-            if (newX > elements.gameField.offsetWidth - 10) newX = elements.gameField.offsetWidth - 10;
-            if (newY < 0) newY = 0;
-            if (newY > elements.gameField.offsetHeight - 10) newY = elements.gameField.offsetHeight - 10;
-            
-            // Update position
-            gameState.playerX = newX;
-            gameState.playerY = newY;
-            updatePlayerPosition();
-            
-            // Update field position (right movement advances the ball)
-            if (direction === 'right') {
-                gameState.fieldPosition += moveDistance / 2;
-                gameState.yardsToGo -= moveDistance / 2;
-                
-                // Check if first down
-                if (gameState.yardsToGo <= 0) {
-                    firstDown();
-                }
-                
-                // Check if touchdown
-                if (gameState.fieldPosition >= 100) {
-                    touchdown();
-                }
-                
-                // Update display
-                updateDisplay();
+            // Apply complexity filter
+            if (complexityFilter.value) {
+                filtered = filtered.filter(prompt => prompt.complexity === complexityFilter.value);
             }
             
-            // Check for collisions
-            checkCollisions();
-        }
-        
-        // Handle first down
-        function firstDown() {
-            // Reset down
-            gameState.down = 1;
-            
-            // Reset yards to go
-            gameState.yardsToGo = 10;
-            
-            // Update display
-            updateDisplay();
-        }
-        
-        // Handle touchdown
-        function touchdown() {
-            playSound('touchdown');
-            
-            // Increase score
-            gameState.homeScore += 6;
-            
-            // Reset for next possession
-            gameState.down = 1;
-            gameState.fieldPosition = 20;
-            gameState.yardsToGo = 10;
-            
-            // Reset player position
-            gameState.playerX = 50;
-            gameState.playerY = 100;
-            updatePlayerPosition();
-            
-            // Update display
-            updateDisplay();
-            
-            // Recreate defenders
-            clearDefenders();
-            createDefenders();
-        }
-        
-        // End game
-        function endGame() {
-            gameState.isPlaying = false;
-            
-            // Clear timers
-            if (gameState.gameTimer) {
-                clearInterval(gameState.gameTimer);
-                gameState.gameTimer = null;
+            // Apply use case filter
+            if (useCaseFilter.value) {
+                filtered = filtered.filter(prompt => prompt.useCase === useCaseFilter.value);
             }
             
-            if (gameState.defenderTimer) {
-                clearInterval(gameState.defenderTimer);
-                gameState.defenderTimer = null;
-            }
+            return filtered;
+        }
+
+        // Filter all prompts
+        function filterAllPrompts() {
+            renderAllPrompts();
+        }
+
+        // Populate filter options
+        function populateFilterOptions() {
+            // Get unique categories
+            const categories = [...new Set(prompts.map(prompt => prompt.category))];
             
-            // Show game over message
-            elements.infoContent.innerHTML = `
-                <div style="text-align: center;">
-                    <div>GAME OVER</div>
-                    <div>HOME: ${gameState.homeScore}</div>
-                    <div>VISITOR: ${gameState.visitorScore}</div>
+            // Populate category filter
+            categoryFilter.innerHTML = '<option value="">All Categories</option>';
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categoryFilter.appendChild(option);
+            });
+            
+            // Get unique use cases
+            const useCases = [...new Set(prompts.map(prompt => prompt.useCase))];
+            
+            // Populate use case filter
+            useCaseFilter.innerHTML = '<option value="">All Use Cases</option>';
+            useCases.forEach(useCase => {
+                const option = document.createElement('option');
+                option.value = useCase;
+                option.textContent = useCase;
+                useCaseFilter.appendChild(option);
+            });
+        }
+
+        // Create prompt card element
+        function createPromptCard(prompt) {
+            const promptCard = document.createElement('div');
+            promptCard.className = 'prompt-card';
+            promptCard.dataset.id = prompt.id;
+            
+            const isFavorite = favorites.includes(prompt.id);
+            
+            promptCard.innerHTML = `
+                <button class="favorite-btn ${isFavorite ? 'active' : ''}" data-id="${prompt.id}">⭐</button>
+                <div class="prompt-card-header">
+                    <div>
+                        <div class="prompt-title">${prompt.title}</div>
+                        <div class="prompt-category">${prompt.category}</div>
+                    </div>
                 </div>
+                <div class="prompt-description">${prompt.description}</div>
+                <div class="prompt-use-case">Use case: ${prompt.useCase}</div>
             `;
             
-            elements.infoDisplay.classList.add('active');
+            // Add click event to view prompt
+            promptCard.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('favorite-btn')) {
+                    viewPrompt(prompt.id);
+                }
+            });
+            
+            // Add click event to favorite button
+            const favoriteBtn = promptCard.querySelector('.favorite-btn');
+            favoriteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleFavoriteFromCard(prompt.id);
+            });
+            
+            return promptCard;
         }
-        
-        // Update player position on screen
-        function updatePlayerPosition() {
-            elements.player.style.left = `${gameState.playerX}px`;
-            elements.player.style.top = `${gameState.playerY}px`;
+
+        // View prompt in modal
+        function viewPrompt(promptId) {
+            const prompt = prompts.find(p => p.id === promptId);
+            if (!prompt) return;
+            
+            currentPrompt = prompt;
+            
+            // Update modal content
+            document.getElementById('modalTitle').textContent = prompt.title;
+            document.getElementById('modalCategory').textContent = prompt.category;
+            document.getElementById('modalComplexity').textContent = 
+                prompt.complexity.charAt(0).toUpperCase() + prompt.complexity.slice(1);
+            document.getElementById('modalUseCase').textContent = prompt.useCase;
+            document.getElementById('modalPromptText').textContent = prompt.text;
+            document.getElementById('modalDescription').textContent = prompt.description;
+            
+            // Update favorite button
+            const isFavorite = favorites.includes(prompt.id);
+            document.getElementById('modalFavoriteText').textContent = 
+                isFavorite ? 'Remove from Favorites' : 'Add to Favorites';
+            
+            // Show modal
+            promptModal.classList.add('active');
+            
+            // Add to recent prompts
+            addToRecentPrompts(prompt.id);
         }
-        
-        // Update all display elements
-        function updateDisplay() {
-            elements.down.textContent = gameState.down;
-            elements.fieldPosition.textContent = Math.floor(gameState.fieldPosition);
-            elements.yardsToGo.textContent = Math.ceil(gameState.yardsToGo);
-            elements.homeScore.textContent = gameState.homeScore;
-            elements.visitorScore.textContent = gameState.visitorScore;
-            updateTimeDisplay();
+
+        // Close prompt modal
+        function closePromptModal() {
+            promptModal.classList.remove('active');
+            currentPrompt = null;
         }
-        
-        // Update time display
-        function updateTimeDisplay() {
-            const minutes = Math.floor(gameState.timeRemaining / 60);
-            const seconds = gameState.timeRemaining % 60;
-            elements.timeRemaining.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+        // Copy prompt to clipboard
+        function copyPromptToClipboard() {
+            if (!currentPrompt) return;
+            
+            navigator.clipboard.writeText(currentPrompt.text)
+                .then(() => {
+                    showNotification('Prompt copied to clipboard!');
+                })
+                .catch(err => {
+                    console.error('Failed to copy text: ', err);
+                    showNotification('Failed to copy prompt', true);
+                });
         }
-        
-        // Play sound
-        function playSound(soundName) {
-            if (gameState.soundEnabled && sounds[soundName]) {
-                // Create a new audio object to allow overlapping sounds
-                const sound = sounds[soundName].cloneNode();
-                sound.play().catch(e => console.log('Audio play failed:', e));
+
+        // Toggle favorite
+        function toggleFavorite() {
+            if (!currentPrompt) return;
+            
+            const promptId = currentPrompt.id;
+            const index = favorites.indexOf(promptId);
+            
+            if (index === -1) {
+                // Add to favorites
+                favorites.push(promptId);
+                showNotification('Added to favorites!');
+            } else {
+                // Remove from favorites
+                favorites.splice(index, 1);
+                showNotification('Removed from favorites!');
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            
+            // Update UI
+            document.getElementById('modalFavoriteText').textContent = 
+                index === -1 ? 'Remove from Favorites' : 'Add to Favorites';
+            
+            // Update favorite button on card if visible
+            const favoriteBtn = document.querySelector(`.favorite-btn[data-id="${promptId}"]`);
+            if (favoriteBtn) {
+                favoriteBtn.classList.toggle('active');
+            }
+            
+            // Refresh favorites tab if active
+            if (activeTab === 'favorites') {
+                renderFavoritesPrompts();
             }
         }
-        
-        // Initialize the game when the page loads
-        window.addEventListener('load', initGame);
+
+        // Toggle favorite from card
+        function toggleFavoriteFromCard(promptId) {
+            const index = favorites.indexOf(promptId);
+            
+            if (index === -1) {
+                // Add to favorites
+                favorites.push(promptId);
+                showNotification('Added to favorites!');
+            } else {
+                // Remove from favorites
+                favorites.splice(index, 1);
+                showNotification('Removed from favorites!');
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            
+            // Update UI
+            const favoriteBtn = document.querySelector(`.favorite-btn[data-id="${promptId}"]`);
+            if (favoriteBtn) {
+                favoriteBtn.classList.toggle('active');
+            }
+            
+            // Refresh favorites tab if active
+            if (activeTab === 'favorites') {
+                renderFavoritesPrompts();
+            }
+        }
+
+        // Add to recent prompts
+        function addToRecentPrompts(promptId) {
+            // Remove if already in recent
+            const index = recentPrompts.indexOf(promptId);
+            if (index !== -1) {
+                recentPrompts.splice(index, 1);
+            }
+            
+            // Add to beginning
+            recentPrompts.unshift(promptId);
+            
+            // Limit to 10 recent prompts
+            if (recentPrompts.length > 10) {
+                recentPrompts.pop();
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('recentPrompts', JSON.stringify(recentPrompts));
+            
+            // Refresh recent tab if active
+            if (activeTab === 'recent') {
+                renderRecentPrompts();
+            }
+        }
+
+        // Open add prompt modal
+        function openAddPromptModal() {
+            addPromptModal.classList.add('active');
+            document.getElementById('addPromptForm').reset();
+            document.getElementById('customCategoryGroup').style.display = 'none';
+        }
+
+        // Close add prompt modal
+        function closeAddPromptModal() {
+            addPromptModal.classList.remove('active');
+        }
+
+        // Handle category change in add prompt form
+        function handleCategoryChange() {
+            const categorySelect = document.getElementById('promptCategory');
+            const customCategoryGroup = document.getElementById('customCategoryGroup');
+            
+            if (categorySelect.value === 'Custom') {
+                customCategoryGroup.style.display = 'block';
+            } else {
+                customCategoryGroup.style.display = 'none';
+            }
+        }
+
+        // Handle add prompt form submission
+        function handleAddPrompt(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('promptTitle').value;
+            const categorySelect = document.getElementById('promptCategory').value;
+            const customCategory = document.getElementById('customCategory').value;
+            const complexity = document.getElementById('promptComplexity').value;
+            const useCase = document.getElementById('promptUseCase').value;
+            const description = document.getElementById('promptDescription').value;
+            const text = document.getElementById('promptText').value;
+            
+            // Determine category
+            const category = categorySelect === 'Custom' ? customCategory : categorySelect;
+            
+            // Create new prompt object
+            const newPrompt = {
+                id: Date.now(), // Simple ID generation
+                title,
+                category,
+                complexity,
+                useCase,
+                description,
+                text
+            };
+            
+            // Add to user prompts
+            userPrompts.push(newPrompt);
+            
+            // Save to localStorage
+            localStorage.setItem('userPrompts', JSON.stringify(userPrompts));
+            
+            // Add to main prompts array
+            prompts.push(newPrompt);
+            
+            // Refresh UI
+            renderCategories();
+            renderAllPrompts();
+            populateFilterOptions();
+            
+            // Close modal
+            closeAddPromptModal();
+            
+            // Show notification
+            showNotification('Prompt added successfully!');
+        }
+
+        // Open shortcuts modal
+        function openShortcutsModal() {
+            shortcutsModal.classList.add('active');
+        }
+
+        // Close shortcuts modal
+        function closeShortcutsModal() {
+            shortcutsModal.classList.remove('active');
+        }
+
+        // Handle search
+        function handleSearch() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            
+            if (!searchTerm) {
+                // If search is empty, show all prompts in the current view
+                if (activeTab === 'all') {
+                    renderAllPrompts();
+                }
+                return;
+            }
+            
+            // Filter prompts based on search term
+            const filteredPrompts = prompts.filter(prompt => {
+                return (
+                    prompt.title.toLowerCase().includes(searchTerm) ||
+                    prompt.category.toLowerCase().includes(searchTerm) ||
+                    prompt.useCase.toLowerCase().includes(searchTerm) ||
+                    prompt.description.toLowerCase().includes(searchTerm) ||
+                    prompt.text.toLowerCase().includes(searchTerm)
+                );
+            });
+            
+            // Clear current grid
+            const activeGrid = activeTab === 'recent' ? recentPromptsGrid :
+                              activeTab === 'favorites' ? favoritesPromptsGrid :
+                              allPromptsGrid;
+            
+            activeGrid.innerHTML = '';
+            
+            // Render filtered prompts
+            filteredPrompts.forEach(prompt => {
+                const promptCard = createPromptCard(prompt);
+                activeGrid.appendChild(promptCard);
+            });
+            
+            // Show empty state if no results
+            if (filteredPrompts.length === 0) {
+                const emptyState = document.createElement('div');
+                emptyState.className = 'empty-state';
+                emptyState.innerHTML = `
+                    <div class="empty-state-icon">🔍</div>
+                    <div class="empty-state-title">No results found</div>
+                    <div class="empty-state-description">Try a different search term</div>
+                `;
+                activeGrid.appendChild(emptyState);
+            }
+        }
+
+        // Show notification
+        function showNotification(message, isError = false) {
+            const notificationText = document.getElementById('notificationText');
+            notificationText.textContent = message;
+            
+            if (isError) {
+                notification.style.backgroundColor = '#e74c3c';
+            } else {
+                notification.style.backgroundColor = 'var(--accent)';
+            }
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Handle keyboard shortcuts
+        function handleKeyboardShortcuts(e) {
+            // Ignore if typing in an input field
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+                return;
+            }
+            
+            // Ctrl + / : Focus search
+            if (e.ctrlKey && e.key === '/') {
+                e.preventDefault();
+                searchInput.focus();
+            }
+            
+            // Ctrl + N : Add new prompt
+            if (e.ctrlKey && e.key === 'n') {
+                e.preventDefault();
+                openAddPromptModal();
+            }
+            
+            // Ctrl + 1 : View categories
+            if (e.ctrlKey && e.key === '1') {
+                e.preventDefault();
+                switchTab('categories');
+            }
+            
+            // Ctrl + 2 : View recent
+            if (e.ctrlKey && e.key === '2') {
+                e.preventDefault();
+                switchTab('recent');
+            }
+            
+            // Ctrl + 3 : View favorites
+            if (e.ctrlKey && e.key === '3') {
+                e.preventDefault();
+                switchTab('favorites');
+            }
+            
+            // Ctrl + 4 : View all prompts
+            if (e.ctrlKey && e.key === '4') {
+                e.preventDefault();
+                switchTab('all');
+            }
+            
+            // Esc : Close modal
+            if (e.key === 'Escape') {
+                if (promptModal.classList.contains('active')) {
+                    closePromptModal();
+                } else if (addPromptModal.classList.contains('active')) {
+                    closeAddPromptModal();
+                } else if (shortcutsModal.classList.contains('active')) {
+                    closeShortcutsModal();
+                }
+            }
+        }
+
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>

@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mattel Electronic Football</title>
+    <style>
+        /* General Styles */
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        /* Game Container */
+        .game-container {
+            width: 400px;
+            background-color: #F0EAD6;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        /* Scoreboard */
+        .scoreboard {
+            width: 100%;
+            background-color: #8B0000;
+            border: 4px solid #006400;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 15px;
+            color: #FF0000;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 5px;
+        }
+        
+        .scoreboard-item {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .scoreboard-value {
+            color: #FF0000;
+            text-shadow: 0 0 5px #FF0000;
+        }
+        
+        /* Game Field */
+        .game-field {
+            width: 100%;
+            height: 200px;
+            background-color: #8B0000;
+            border: 4px solid #006400;
+            border-radius: 5px;
+            position: relative;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        
+        /* Yard lines */
+        .yard-line {
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            background-color: white;
+            top: 20%;
+        }
+        
+        .yard-line:nth-child(2) {
+            top: 40%;
+        }
+        
+        .yard-line:nth-child(3) {
+            top: 60%;
+        }
+        
+        .yard-line:nth-child(4) {
+            top: 80%;
+        }
+        
+        /* Player and Defenders */
+        .player, .defender {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #FF0000;
+            border-radius: 50%;
+            box-shadow: 0 0 10px 2px #FF0000;
+            z-index: 2;
+        }
+        
+        /* Control Panel */
+        .control-panel {
+            width: 100%;
+            background-color: #3A3B3C;
+            border-radius: 5px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        /* Button Rows */
+        .button-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        
+        /* Buttons */
+        .btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            border: none;
+            margin: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 3px 0 rgba(0, 0, 0, 0.3);
+            transition: all 0.1s;
+        }
+        
+        .btn:active {
+            transform: translateY(3px);
+            box-shadow: none;
+        }
+        
+        .btn-blue {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .btn-yellow {
+            background-color: #f1c40f;
+            color: black;
+        }
+        
+        .btn-orange {
+            background-color: #e67e22;
+            color: white;
+        }
+        
+        /* Arrow Buttons */
+        .arrow-up::before {
+            content: '▲';
+            font-size: 24px;
+        }
+        
+        .arrow-down::before {
+            content: '▼';
+            font-size: 24px;
+        }
+        
+        .arrow-left::before {
+            content: '◀';
+            font-size: 24px;
+        }
+        
+        .arrow-right::before {
+            content: '▶';
+            font-size: 24px;
+        }
+        
+        /* Difficulty Switch */
+        .difficulty-switch {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            width: 100%;
+            justify-content: space-between;
+        }
+        
+        .switch-container {
+            display: flex;
+            background-color: #2c3e50;
+            border-radius: 15px;
+            padding: 3px;
+            width: 150px;
+        }
+        
+        .switch-position {
+            flex: 1;
+            height: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: background-color 0.2s;
+        }
+        
+        .switch-position.active {
+            background-color: #3498db;
+        }
+        
+        /* Branding */
+        .branding {
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: #3A3B3C;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+        
+        /* Info Display */
+        .info-display {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #8B0000;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #FF0000;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            z-index: 10;
+        }
+        
+        .info-display.active {
+            display: flex;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            width: 80%;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- Scoreboard -->
+        <div class="scoreboard">
+            <div class="scoreboard-item">
+                <span>DOWN:</span>
+                <span class="scoreboard-value" id="down">1</span>
+            </div>
+            <div class="scoreboard-item">
+                <span>FIELD POSITION:</span>
+                <span class="scoreboard-value" id="field-position">20</span>
+            </div>
+            <div class="scoreboard-item">
+                <span>YARDS TO GO:</span>
+                <span class="scoreboard-value" id="yards-to-go">10</span>
+            </div>
+            <div class="scoreboard-item">
+                <span>HOME:</span>
+                <span class="scoreboard-value" id="home-score">0</span>
+            </div>
+            <div class="scoreboard-item">
+                <span>TIME REMAINING:</span>
+                <span class="scoreboard-value" id="time-remaining">5:00</span>
+            </div>
+            <div class="scoreboard-item">
+                <span>VISITOR:</span>
+                <span class="scoreboard-value" id="visitor-score">0</span>
+            </div>
+        </div>
+        
+        <!-- Game Field -->
+        <div class="game-field" id="game-field">
+            <!-- Yard lines -->
+            <div class="yard-line"></div>
+            <div class="yard-line"></div>
+            <div class="yard-line"></div>
+            <div class="yard-line"></div>
+            
+            <!-- Player -->
+            <div class="player" id="player"></div>
+            
+            <!-- Info Display (shown when ST or SC is pressed) -->
+            <div class="info-display" id="info-display">
+                <div id="info-content"></div>
+            </div>
+        </div>
+        
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <!-- First Row of Buttons -->
+            <div class="button-row">
+                <button class="btn btn-blue" id="btn-st">ST</button>
+                <button class="btn btn-blue" id="btn-sc">SC</button>
+                <button class="btn btn-blue" id="btn-k">K</button>
+            </div>
+            
+            <!-- Second Row (Arrow Buttons) -->
+            <div class="button-row">
+                <button class="btn btn-orange arrow-up" id="btn-up"></button>
+            </div>
+            
+            <div class="button-row">
+                <button class="btn btn-orange arrow-left" id="btn-left"></button>
+                <button class="btn btn-orange arrow-right" id="btn-right"></button>
+            </div>
+            
+            <div class="button-row">
+                <button class="btn btn-orange arrow-down" id="btn-down"></button>
+            </div>
+            
+            <!-- Third Row -->
+            <div class="button-row">
+                <button class="btn btn-yellow" id="btn-sound">SOUND</button>
+            </div>
+            
+            <!-- Difficulty Switch -->
+            <div class="difficulty-switch">
+                <span>DIFFICULTY:</span>
+                <div class="switch-container">
+                    <div class="switch-position" id="diff-easy">1</div>
+                    <div class="switch-position active" id="diff-off">OFF</div>
+                    <div class="switch-position" id="diff-hard">2</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Branding -->
+        <div class="branding">ELECTRONIC FOOTBALL</div>
+    </div>
+
+    <script>
+        // Game State Variables
+        let gameState = {
+            isOn: false,          // Game is on/off
+            isPlaying: false,     // Game is actively being played
+            soundEnabled: true,   // Sound is on/off
+            difficulty: 'off',    // Current difficulty setting
+            down: 1,              // Current down (1-4)
+            fieldPosition: 20,    // Current yard line
+            yardsToGo: 10,        // Yards needed for first down
+            homeScore: 0,         // Home team score
+            visitorScore: 0,      // Visitor team score
+            timeRemaining: 300,   // Time remaining in seconds
+            playerX: 50,          // Player X position
+            playerY: 100,         // Player Y position
+            defenders: [],        // Array of defender objects
+            gameTimer: null,      // Timer for game countdown
+            defenderTimer: null,  // Timer for defender movement
+            infoDisplayTimer: null // Timer for info display
+        };
+        
+        // DOM Elements
+        const elements = {
+            down: document.getElementById('down'),
+            fieldPosition: document.getElementById('field-position'),
+            yardsToGo: document.getElementById('yards-to-go'),
+            homeScore: document.getElementById('home-score'),
+            visitorScore: document.getElementById('visitor-score'),
+            timeRemaining: document.getElementById('time-remaining'),
+            gameField: document.getElementById('game-field'),
+            player: document.getElementById('player'),
+            infoDisplay: document.getElementById('info-display'),
+            infoContent: document.getElementById('info-content'),
+            btnSt: document.getElementById('btn-st'),
+            btnSc: document.getElementById('btn-sc'),
+            btnK: document.getElementById('btn-k'),
+            btnSound: document.getElementById('btn-sound'),
+            btnUp: document.getElementById('btn-up'),
+            btnDown: document.getElementById('btn-down'),
+            btnLeft: document.getElementById('btn-left'),
+            btnRight: document.getElementById('btn-right'),
+            diffEasy: document.getElementById('diff-easy'),
+            diffOff: document.getElementById('diff-off'),
+            diffHard: document.getElementById('diff-hard')
+        };
+        
+        // Sound Effects
+        const sounds = {
+            move: new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAAAA'),
+            tackle: new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAAAA'),
+            touchdown: new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAAAA'),
+            button: new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAAAA')
+        };
+        
+        // Initialize the game
+        function initGame() {
+            // Set initial player position
+            updatePlayerPosition();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Update display
+            updateDisplay();
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            // Button event listeners
+            elements.btnSt.addEventListener('click', handleStButton);
+            elements.btnSc.addEventListener('click', handleScButton);
+            elements.btnK.addEventListener('click', handleKButton);
+            elements.btnSound.addEventListener('click', handleSoundButton);
+            
+            // Direction buttons
+            elements.btnUp.addEventListener('click', () => movePlayer('up'));
+            elements.btnDown.addEventListener('click', () => movePlayer('down'));
+            elements.btnLeft.addEventListener('click', () => movePlayer('left'));
+            elements.btnRight.addEventListener('click', () => movePlayer('right'));
+            
+            // Difficulty switch
+            elements.diffEasy.addEventListener('click', () => setDifficulty('easy'));
+            elements.diffOff.addEventListener('click', () => setDifficulty('off'));
+            elements.diffHard.addEventListener('click', () => setDifficulty('hard'));
+            
+            // Keyboard controls
+            document.addEventListener('keydown', handleKeyDown);
+        }
+        
+        // Handle keyboard input
+        function handleKeyDown(event) {
+            if (!gameState.isOn || !gameState.isPlaying) return;
+            
+            switch(event.key) {
+                case 'ArrowUp':
+                    movePlayer('up');
+                    break;
+                case 'ArrowDown':
+                    movePlayer('down');
+                    break;
+                case 'ArrowLeft':
+                    movePlayer('left');
+                    break;
+                case 'ArrowRight':
+                    movePlayer('right');
+                    break;
+            }
+        }
+        
+        // Handle ST (Status) button
+        function handleStButton() {
+            playSound('button');
+            
+            if (!gameState.isOn) return;
+            
+            // Show status information
+            elements.infoContent.innerHTML = `
+                <div class="info-row">
+                    <span>DOWN:</span>
+                    <span>${gameState.down}</span>
+                </div>
+                <div class="info-row">
+                    <span>FIELD POSITION:</span>
+                    <span>${gameState.fieldPosition}</span>
+                </div>
+                <div class="info-row">
+                    <span>YARDS TO GO:</span>
+                    <span>${gameState.yardsToGo}</span>
+                </div>
+            `;
+            
+            elements.infoDisplay.classList.add('active');
+            
+            // Clear any existing timer
+            if (gameState.infoDisplayTimer) {
+                clearTimeout(gameState.infoDisplayTimer);
+            }
+            
+            // Hide after 3 seconds
+            gameState.infoDisplayTimer = setTimeout(() => {
+                elements.infoDisplay.classList.remove('active');
+            }, 3000);
+        }
+        
+        // Handle SC (Score) button
+        function handleScButton() {
+            playSound('button');
+            
+            if (!gameState.isOn) return;
+            
+            // Show score information
+            const minutes = Math.floor(gameState.timeRemaining / 60);
+            const seconds = gameState.timeRemaining % 60;
+            const timeString = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            
+            elements.infoContent.innerHTML = `
+                <div class="info-row">
+                    <span>HOME:</span>
+                    <span>${gameState.homeScore}</span>
+                </div>
+                <div class="info-row">
+                    <span>VISITOR:</span>
+                    <span>${gameState.visitorScore}</span>
+                </div>
+                <div class="info-row">
+                    <span>TIME REMAINING:</span>
+                    <span>${timeString}</span>
+                </div>
+            `;
+            
+            elements.infoDisplay.classList.add('active');
+            
+            // Clear any existing timer
+            if (gameState.infoDisplayTimer) {
+                clearTimeout(gameState.infoDisplayTimer);
+            }
+            
+            // Hide after 3 seconds
+            gameState.infoDisplayTimer = setTimeout(() => {
+                elements.infoDisplay.classList.remove('active');
+            }, 3000);
+        }
+        
+        // Handle K (Kick) button
+        function handleKButton() {
+            playSound('button');
+            
+            if (!gameState.isOn || !gameState.isPlaying) return;
+            
+            // Only allow kicking on 4th down
+            if (gameState.down !== 4) return;
+            
+            // Implement kicking logic
+            // For simplicity, we'll just reset the down and position
+            gameState.down = 1;
+            gameState.fieldPosition = 20;
+            gameState.yardsToGo = 10;
+            
+            // Update display
+            updateDisplay();
+            
+            // Reset player position
+            gameState.playerX = 50;
+            gameState.playerY = 100;
+            updatePlayerPosition();
+            
+            // Remove all defenders
+            clearDefenders();
+            
+            // Create new defenders
+            createDefenders();
+        }
+        
+        // Handle SOUND button
+        function handleSoundButton() {
+            playSound('button');
+            
+            // Toggle sound
+            gameState.soundEnabled = !gameState.soundEnabled;
+            
+            // Visual feedback (could be improved)
+            elements.btnSound.style.opacity = gameState.soundEnabled ? '1' : '0.5';
+        }
+        
+        // Set difficulty
+        function setDifficulty(difficulty) {
+            playSound('button');
+            
+            // Update UI
+            elements.diffEasy.classList.remove('active');
+            elements.diffOff.classList.remove('active');
+            elements.diffHard.classList.remove('active');
+            
+            if (difficulty === 'easy') {
+                elements.diffEasy.classList.add('active');
+            } else if (difficulty === 'off') {
+                elements.diffOff.classList.add('active');
+            } else if (difficulty === 'hard') {
+                elements.diffHard.classList.add('active');
+            }
+            
+            // If turning off, stop the game
+            if (difficulty === 'off') {
+                if (gameState.isOn) {
+                    stopGame();
+                }
+                gameState.isOn = false;
+                return;
+            }
+            
+            // If turning on, start the game
+            if (!gameState.isOn) {
+                startGame(difficulty);
+            } else {
+                // Just update difficulty
+                gameState.difficulty = difficulty;
+                
+                // Recreate defenders with new difficulty
+                clearDefenders();
+                createDefenders();
+            }
+        }
+        
+        // Start the game
+        function startGame(difficulty) {
+            // Set game state
+            gameState.isOn = true;
+            gameState.isPlaying = true;
+            gameState.difficulty = difficulty;
+            
+            // Reset game variables
+            gameState.down = 1;
+            gameState.fieldPosition = 20;
+            gameState.yardsToGo = 10;
+            gameState.homeScore = 0;
+            gameState.visitorScore = 0;
+            gameState.timeRemaining = 300;
+            gameState.playerX = 50;
+            gameState.playerY = 100;
+            
+            // Update display
+            updateDisplay();
+            updatePlayerPosition();
+            
+            // Create defenders
+            createDefenders();
+            
+            // Start game timer
+            startGameTimer();
+            
+            // Start defender movement
+            startDefenderMovement();
+        }
+        
+        // Stop the game
+        function stopGame() {
+            gameState.isPlaying = false;
+            
+            // Clear timers
+            if (gameState.gameTimer) {
+                clearInterval(gameState.gameTimer);
+                gameState.gameTimer = null;
+            }
+            
+            if (gameState.defenderTimer) {
+                clearInterval(gameState.defenderTimer);
+                gameState.defenderTimer = null;
+            }
+            
+            // Clear defenders
+            clearDefenders();
+            
+            // Reset display
+            elements.down.textContent = '-';
+            elements.fieldPosition.textContent = '-';
+            elements.yardsToGo.textContent = '-';
+            elements.homeScore.textContent = '-';
+            elements.visitorScore.textContent = '-';
+            elements.timeRemaining.textContent = '-';
+        }
+        
+        // Start game timer
+        function startGameTimer() {
+            gameState.gameTimer = setInterval(() => {
+                // Decrease time
+                gameState.timeRemaining--;
+                
+                // Update display
+                updateTimeDisplay();
+                
+                // Check if time is up
+                if (gameState.timeRemaining <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+        
+        // Start defender movement
+        function startDefenderMovement() {
+            // Set interval based on difficulty
+            const interval = gameState.difficulty === 'easy' ? 500 : 250;
+            
+            gameState.defenderTimer = setInterval(() => {
+                moveDefenders();
+                checkCollisions();
+            }, interval);
+        }
+        
+        // Create defenders
+        function createDefenders() {
+            // Clear existing defenders
+            clearDefenders();
+            
+            // Number of defenders based on difficulty
+            const defenderCount = gameState.difficulty === 'easy' ? 3 : 5;
+            
+            // Create defenders
+            for (let i = 0; i < defenderCount; i++) {
+                const defender = document.createElement('div');
+                defender.className = 'defender';
+                
+                // Random position (but not too close to player)
+                let x, y;
+                do {
+                    x = Math.floor(Math.random() * (elements.gameField.offsetWidth - 10));
+                    y = Math.floor(Math.random() * (elements.gameField.offsetHeight - 10));
+                } while (Math.abs(x - gameState.playerX) < 50 && Math.abs(y - gameState.playerY) < 50);
+                
+                defender.style.left = `${x}px`;
+                defender.style.top = `${y}px`;
+                
+                elements.gameField.appendChild(defender);
+                
+                // Add to defenders array
+                gameState.defenders.push({
+                    element: defender,
+                    x: x,
+                    y: y,
+                    speed: gameState.difficulty === 'easy' ? 1 : 2
+                });
+            }
+        }
+        
+        // Clear all defenders
+        function clearDefenders() {
+            // Remove from DOM
+            gameState.defenders.forEach(defender => {
+                defender.element.remove();
+            });
+            
+            // Clear array
+            gameState.defenders = [];
+        }
+        
+        // Move defenders
+        function moveDefenders() {
+            gameState.defenders.forEach(defender => {
+                // Calculate direction to player
+                const dx = gameState.playerX - defender.x;
+                const dy = gameState.playerY - defender.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                // Normalize and apply speed
+                const moveX = (dx / distance) * defender.speed;
+                const moveY = (dy / distance) * defender.speed;
+                
+                // Update position
+                defender.x += moveX;
+                defender.y += moveY;
+                
+                // Update DOM
+                defender.element.style.left = `${defender.x}px`;
+                defender.element.style.top = `${defender.y}px`;
+            });
+        }
+        
+        // Check for collisions
+        function checkCollisions() {
+            gameState.defenders.forEach(defender => {
+                const dx = gameState.playerX - defender.x;
+                const dy = gameState.playerY - defender.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                // If collision
+                if (distance < 15) {
+                    playSound('tackle');
+                    
+                    // Increase down
+                    gameState.down++;
+                    
+                    // Check if turnover
+                    if (gameState.down > 4) {
+                        turnover();
+                    } else {
+                        // Reset player position
+                        gameState.playerX = 50;
+                        gameState.playerY = 100;
+                        updatePlayerPosition();
+                        updateDisplay();
+                    }
+                }
+            });
+        }
+        
+        // Handle turnover
+        function turnover() {
+            // Reset downs
+            gameState.down = 1;
+            
+            // Reset field position
+            gameState.fieldPosition = 20;
+            gameState.yardsToGo = 10;
+            
+            // Reset player position
+            gameState.playerX = 50;
+            gameState.playerY = 100;
+            updatePlayerPosition();
+            
+            // Update display
+            updateDisplay();
+            
+            // Recreate defenders
+            clearDefenders();
+            createDefenders();
+        }
+        
+        // Move player
+        function movePlayer(direction) {
+            if (!gameState.isOn || !gameState.isPlaying) return;
+            
+            playSound('move');
+            
+            // Calculate new position
+            let newX = gameState.playerX;
+            let newY = gameState.playerY;
+            const moveDistance = 10;
+            
+            switch(direction) {
+                case 'up':
+                    newY -= moveDistance;
+                    break;
+                case 'down':
+                    newY += moveDistance;
+                    break;
+                case 'left':
+                    newX -= moveDistance;
+                    break;
+                case 'right':
+                    newX += moveDistance;
+                    break;
+            }
+            
+            // Boundary checking
+            if (newX < 0) newX = 0;
+            if (newX > elements.gameField.offsetWidth - 10) newX = elements.gameField.offsetWidth - 10;
+            if (newY < 0) newY = 0;
+            if (newY > elements.gameField.offsetHeight - 10) newY = elements.gameField.offsetHeight - 10;
+            
+            // Update position
+            gameState.playerX = newX;
+            gameState.playerY = newY;
+            updatePlayerPosition();
+            
+            // Update field position (right movement advances the ball)
+            if (direction === 'right') {
+                gameState.fieldPosition += moveDistance / 2;
+                gameState.yardsToGo -= moveDistance / 2;
+                
+                // Check if first down
+                if (gameState.yardsToGo <= 0) {
+                    firstDown();
+                }
+                
+                // Check if touchdown
+                if (gameState.fieldPosition >= 100) {
+                    touchdown();
+                }
+                
+                // Update display
+                updateDisplay();
+            }
+            
+            // Check for collisions
+            checkCollisions();
+        }
+        
+        // Handle first down
+        function firstDown() {
+            // Reset down
+            gameState.down = 1;
+            
+            // Reset yards to go
+            gameState.yardsToGo = 10;
+            
+            // Update display
+            updateDisplay();
+        }
+        
+        // Handle touchdown
+        function touchdown() {
+            playSound('touchdown');
+            
+            // Increase score
+            gameState.homeScore += 6;
+            
+            // Reset for next possession
+            gameState.down = 1;
+            gameState.fieldPosition = 20;
+            gameState.yardsToGo = 10;
+            
+            // Reset player position
+            gameState.playerX = 50;
+            gameState.playerY = 100;
+            updatePlayerPosition();
+            
+            // Update display
+            updateDisplay();
+            
+            // Recreate defenders
+            clearDefenders();
+            createDefenders();
+        }
+        
+        // End game
+        function endGame() {
+            gameState.isPlaying = false;
+            
+            // Clear timers
+            if (gameState.gameTimer) {
+                clearInterval(gameState.gameTimer);
+                gameState.gameTimer = null;
+            }
+            
+            if (gameState.defenderTimer) {
+                clearInterval(gameState.defenderTimer);
+                gameState.defenderTimer = null;
+            }
+            
+            // Show game over message
+            elements.infoContent.innerHTML = `
+                <div style="text-align: center;">
+                    <div>GAME OVER</div>
+                    <div>HOME: ${gameState.homeScore}</div>
+                    <div>VISITOR: ${gameState.visitorScore}</div>
+                </div>
+            `;
+            
+            elements.infoDisplay.classList.add('active');
+        }
+        
+        // Update player position on screen
+        function updatePlayerPosition() {
+            elements.player.style.left = `${gameState.playerX}px`;
+            elements.player.style.top = `${gameState.playerY}px`;
+        }
+        
+        // Update all display elements
+        function updateDisplay() {
+            elements.down.textContent = gameState.down;
+            elements.fieldPosition.textContent = Math.floor(gameState.fieldPosition);
+            elements.yardsToGo.textContent = Math.ceil(gameState.yardsToGo);
+            elements.homeScore.textContent = gameState.homeScore;
+            elements.visitorScore.textContent = gameState.visitorScore;
+            updateTimeDisplay();
+        }
+        
+        // Update time display
+        function updateTimeDisplay() {
+            const minutes = Math.floor(gameState.timeRemaining / 60);
+            const seconds = gameState.timeRemaining % 60;
+            elements.timeRemaining.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+        
+        // Play sound
+        function playSound(soundName) {
+            if (gameState.soundEnabled && sounds[soundName]) {
+                // Create a new audio object to allow overlapping sounds
+                const sound = sounds[soundName].cloneNode();
+                sound.play().catch(e => console.log('Audio play failed:', e));
+            }
+        }
+        
+        // Initialize the game when the page loads
+        window.addEventListener('load', initGame);
+    </script>
+</body>
+</html>
